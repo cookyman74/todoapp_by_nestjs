@@ -58,9 +58,6 @@ npm run start:dev
 
 서버는 **`http://localhost:3000`**에서 실행됩니다.
 
-## API 문서
-
-API 문서는 **Swagger**를 통해 제공되며, **`http://localhost:3000/api`**에서 확인할 수 있습니다. Swagger를 통해 전체 API 엔드포인트와 요청/응답 형식을 테스트할 수 있습니다.
 
 ## 주요 엔드포인트
 
