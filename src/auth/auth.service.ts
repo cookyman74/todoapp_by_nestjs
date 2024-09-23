@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from "../todos/dto/create-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,8 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
-    console.log(user);
     if (user && (await bcrypt.compare(pass, user.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
     }
@@ -26,6 +27,34 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
+  }
+
+  // 회원가입 로직
+  async signup(createUserDto: CreateUserDto): Promise<any> {
+    const { name, email, password } = createUserDto;
+    console.log(name, email, password);
+    // 이메일 중복 체크
+    const existingUser = await this.usersService.findOneByEmail(email);
+    if (existingUser) {
+      throw new ConflictException('이미 사용 중인 이메일입니다.');
+    }
+
+    try {
+      // 비밀번호 해시화
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // 데이터베이스에 사용자 저장
+      const user = await this.usersService.create({
+        name,
+        email,
+        password: hashedPassword,
+      });
+
+      return user;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      throw new InternalServerErrorException('회원가입에 실패했습니다.');
+    }
   }
 
   async refreshToken(token: string) {

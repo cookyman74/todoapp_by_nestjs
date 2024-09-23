@@ -1,5 +1,6 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from '../todos/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,12 @@ export class AuthController {
 
     // 검증된 사용자로 JWT 발급
     return this.authService.login(user);
+  }
+
+  @Post('signup')
+  async singup(@Body() createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+    return this.authService.signup(createUserDto);
   }
 
   @Post('refresh')
