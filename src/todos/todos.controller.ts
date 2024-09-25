@@ -7,8 +7,8 @@ import {
   Post,
   Put,
   Request,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateTodoDto } from './dto/create-todo.dto';
