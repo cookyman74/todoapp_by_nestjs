@@ -69,4 +69,16 @@ export class TodosService {
       where: { id: todoId },
     });
   }
+
+  updateTodoStatus(todoId: number, completed: boolean, userId: any) {
+    return this.prisma.todo.updateMany({
+      where: {
+        id: todoId,
+        userId: userId,
+      },
+      data: {
+        completed: completed,
+      },
+    });
+  }
 }

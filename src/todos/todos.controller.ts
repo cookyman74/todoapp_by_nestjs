@@ -3,12 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, Patch,
   Post,
   Put,
   Request,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards
+} from "@nestjs/common";
 import { TodosService } from './todos.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -33,21 +33,34 @@ export class TodosController {
     return this.todosService.findOne(req.user.userId, todoId);
   }
 
+  // 할일 생성
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  createTodo(@Request() req, @Body() createTodoDto: CreateTodoDto) {
-    // JWT가 유효하면 새로운 할 일 생성
+  async createTodo(@Request() req, @Body() createTodoDto: CreateTodoDto) {
     return this.todosService.create(req.user.userId, createTodoDto);
   }
 
+  // 할일 수정
   @UseGuards(AuthGuard('jwt'))
   @Put(':id') // 업데이트 엔드포인트 추가
-  updateTodo(
+  async updateTodo(
     @Request() req,
     @Param('id') todoId: number,
     @Body() updateTodoDto: UpdateTodoDto,
   ) {
     return this.todosService.update(req.user.userId, todoId, updateTodoDto);
+  }
+
+  // 할일 수정
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id') // 업데이트 엔드포인트 추가
+  async updateTodoStatus(
+    @Request() req,
+    @Param('id') todoId: number,
+    @Body('completed') completed: boolean,
+  ) {
+    const userId = req.user.userId;
+    return this.todosService.updateTodoStatus(+todoId, completed, userId);
   }
 
   // 할 일 삭제
