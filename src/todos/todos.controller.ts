@@ -37,6 +37,7 @@ export class TodosController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async createTodo(@Request() req, @Body() createTodoDto: CreateTodoDto) {
+    console.log(req.body);
     return this.todosService.create(req.user.userId, createTodoDto);
   }
 

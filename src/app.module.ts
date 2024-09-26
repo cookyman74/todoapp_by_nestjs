@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -6,7 +6,8 @@ import { TodosModule } from './todos/todos.module';
 import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule, ConfigService } from '@nestjs/config/dist';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -20,8 +21,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
   providers: [AppService, PrismaService],
   exports: [PrismaService],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private configService: ConfigService) {
     console.log('JWT_SECRET:', this.configService.get<string>('JWT_SECRET')); // 환경 변수 확인
+  }
+
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

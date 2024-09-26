@@ -5,6 +5,7 @@ import {
   IsString,
   IsBoolean,
   IsDateString,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateTodoDto {
@@ -16,9 +17,9 @@ export class CreateTodoDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  priority?: string;
+  priority?: number;
   @IsDateString()
   @IsOptional()
   deadline?: Date;

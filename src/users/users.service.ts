@@ -18,6 +18,11 @@ export class UsersService {
     });
   }
 
+  // 모든 사용자 조회
+  async findUserAll() {
+    return this.prisma.user.findMany();
+  }
+
   // 사용자 이메일로 조회
   async findOneByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
